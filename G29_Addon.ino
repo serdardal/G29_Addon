@@ -1,11 +1,11 @@
 #include <Joystick.h>
 
-Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,JOYSTICK_TYPE_GAMEPAD,
-  2, 0,                  // Button Count, Hat Switch Count
-  false, false, false,   // No X, Y, or Z Axis
-  false, false, false,   // No Rx, Ry, or Rz
-  false, false,          // No rudder or throttle
-  false, false, false);  // No accelerator, brake, or steering
+Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_GAMEPAD,
+                   3, 0,                  // Button Count, Hat Switch Count
+                   false, false, false,   // No X, Y, or Z Axis
+                   false, false, false,   // No Rx, Ry, or Rz
+                   false, false,          // No rudder or throttle
+                   false, false, false);  // No accelerator, brake, or steering
 
 int retarderSensorValue;
 int retarderPositionValues[] = {587, 531, 469, 413};
@@ -13,19 +13,31 @@ int retarderPositionValues[] = {587, 531, 469, 413};
 int retarderCurrentPos = 0;
 int retarderPotValueMargin = 7;
 
+bool handBrakeReadValue;
+int handBrakeButtonPin = 2;
+bool handBrakeState = 0;
+
 void setup() {
+  pinMode(handBrakeButtonPin, INPUT);
   Joystick.begin();
 }
 
 void loop() {
   retarderSensorValue = analogRead(A0);
+  handBrakeReadValue = digitalRead(handBrakeButtonPin) == HIGH;
 
+  handleRetarder();
+  handleHandBrake();
+
+  delay(1);
+}
+
+void handleRetarder() {
   int newRetarderPos = getNewRetarderPos(retarderSensorValue);
 
   if (newRetarderPos >= 0 && newRetarderPos != retarderCurrentPos) {
     adjustRetarderPosition(newRetarderPos);
   }
-  delay(1);
 }
 
 int getNewRetarderPos(int value) {
@@ -54,6 +66,13 @@ void adjustRetarderPosition(int newPos) {
       // delay between push button if diff > 1
       delay(50);
     }
+  }
+}
+
+void handleHandBrake() {
+  if (handBrakeReadValue != handBrakeState) {
+    handBrakeState = handBrakeReadValue;
+    pushToButton(2);
   }
 }
 
