@@ -2,13 +2,13 @@
 
 Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,JOYSTICK_TYPE_GAMEPAD,
   2, 0,                  // Button Count, Hat Switch Count
-  false, false, false,     // X and Y, but no Z Axis
+  false, false, false,   // No X, Y, or Z Axis
   false, false, false,   // No Rx, Ry, or Rz
   false, false,          // No rudder or throttle
   false, false, false);  // No accelerator, brake, or steering
 
 int retarderSensorValue;
-int retarderPositionValues[] = {584, 542, 499, 464};
+int retarderPositionValues[] = {587, 531, 469, 413};
 
 int retarderCurrentPos = 0;
 int retarderPotValueMargin = 7;
@@ -25,6 +25,7 @@ void loop() {
   if (newRetarderPos >= 0 && newRetarderPos != retarderCurrentPos) {
     adjustRetarderPosition(newRetarderPos);
   }
+  delay(1);
 }
 
 int getNewRetarderPos(int value) {
