@@ -8,7 +8,7 @@ Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_GAMEPAD,
                    false, false, false);  // No accelerator, brake, or steering
 
 int retarderSensorValue;
-int retarderPositionValues[] = {587, 531, 469, 413};
+int retarderPositionValues[] = {564, 501, 438, 385};
 
 int retarderCurrentPos = 0;
 int retarderPotValueMargin = 7;
