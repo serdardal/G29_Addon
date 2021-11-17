@@ -1,12 +1,12 @@
-int handBrakeButtonPin = 4;
+int shifterToggle1ButtonPin = 2;
 
 void setup() {
-  pinMode(handBrakeButtonPin, INPUT);
+  pinMode(shifterToggle1ButtonPin, INPUT);
   Serial.begin(9600);
 }
 
 void loop() {
-  if (digitalRead(handBrakeButtonPin) == HIGH) {
+  if (digitalRead(shifterToggle1ButtonPin) == HIGH) {
     Serial.println("PUSH!");
   } else {
     Serial.println("RELEASE!");
