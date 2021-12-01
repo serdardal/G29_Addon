@@ -1,4 +1,4 @@
-int shifterToggle1ButtonPin = 4;
+int shifterToggle1ButtonPin = 7;
 
 void setup() {
   pinMode(shifterToggle1ButtonPin, INPUT);

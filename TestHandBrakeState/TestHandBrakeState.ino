@@ -1,4 +1,4 @@
-int handBrakeButtonPin = 4;
+int handBrakeButtonPin = 2;
 
 void setup() {
   pinMode(handBrakeButtonPin, INPUT);

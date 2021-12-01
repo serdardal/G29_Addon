@@ -1,7 +1,7 @@
 #include <Joystick.h>
 
 Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_GAMEPAD,
-                   4, 0,                  // Button Count, Hat Switch Count
+                   5, 0,                  // Button Count, Hat Switch Count
                    false, false, false,   // No X, Y, or Z Axis
                    false, false, false,   // No Rx, Ry, or Rz
                    false, false,          // No rudder or throttle
@@ -14,15 +14,20 @@ int retarderCurrentPos = 0;
 int retarderPotValueMargin = 7;
 
 bool shifterToggle1ReadValue;
-int shifterToggle1ButtonPin = 2;
+int shifterToggle1ButtonPin = 4;
 bool shifterToggle1State = 0;
 
+bool shifterToggle2ReadValue;
+int shifterToggle2ButtonPin = 7;
+bool shifterToggle2State = 0;
+
 bool handBrakeReadValue;
-int handBrakeButtonPin = 4;
+int handBrakeButtonPin = 2;
 bool handBrakeState = 0;
 
 void setup() {
   pinMode(shifterToggle1ButtonPin, INPUT);
+  pinMode(shifterToggle2ButtonPin, INPUT);
   pinMode(handBrakeButtonPin, INPUT);
   Joystick.begin();
 }
@@ -30,9 +35,11 @@ void setup() {
 void loop() {
   retarderSensorValue = analogRead(A0);
   shifterToggle1ReadValue = digitalRead(shifterToggle1ButtonPin) == HIGH;
+  shifterToggle2ReadValue = digitalRead(shifterToggle2ButtonPin) == HIGH;
   handBrakeReadValue = digitalRead(handBrakeButtonPin) == HIGH;
 
-  handleRetarder();
+  //retarder kullanılmayacaksa aşağıdaki satır yorum yapılmalı
+  //handleRetarder();
   handleShifterToggle();
   handleHandBrake();
 
@@ -79,14 +86,23 @@ void adjustRetarderPosition(int newPos) {
 void handleShifterToggle() {
   if (shifterToggle1ReadValue != shifterToggle1State) {
     shifterToggle1State = shifterToggle1ReadValue;
-    pushToButton(2);
+    pushToButton(3);
+  }
+
+  if (shifterToggle2ReadValue != shifterToggle2State) {
+    shifterToggle2State = shifterToggle2ReadValue;
+    pushToButton(4);
   }
 }
 
 void handleHandBrake() {
   if (handBrakeReadValue != handBrakeState) {
     handBrakeState = handBrakeReadValue;
-    pushToButton(3);
+    if (handBrakeReadValue) {
+      Joystick.pressButton(2);
+    } else {
+      Joystick.releaseButton(2);
+    }
   }
 }
 
