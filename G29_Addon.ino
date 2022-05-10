@@ -8,8 +8,9 @@ Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_GAMEPAD,
                    false, false, false);  // No accelerator, brake, or steering
 
 int retarderSensorValue;
-int retarderPositionValues[] = {579, 520, 455, 398};
+int retarderPositionValues[] = {229, 329, 422, 519};
 
+bool retarderHas5Levels = 1;
 int retarderCurrentPos = 0;
 int retarderPotValueMargin = 7;
 
@@ -64,9 +65,23 @@ void adjustRetarderPosition(int newPos) {
     if (turnDirection) {
       ++retarderCurrentPos;
       pushToButton(0);
+
+      if (retarderHas5Levels) {
+        if (retarderCurrentPos > 1) {
+          delay(50);
+          pushToButton(0);
+        }
+      }
     } else {
       --retarderCurrentPos;
       pushToButton(1);
+
+      if (retarderHas5Levels) {
+        if (retarderCurrentPos > 0) {
+          delay(50);
+          pushToButton(1);
+        }
+      }
     }
 
     if (i >= 0 && i < (diff - 1)) {
