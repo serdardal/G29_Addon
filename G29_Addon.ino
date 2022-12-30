@@ -9,8 +9,11 @@ Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_GAMEPAD,
 
 int retarderSensorValue;
 int retarderPositionValues[] = {579, 520, 455, 398};
+// 0 means retarder is closed.
+int mappedInGameRetarderPositions[] = {0, 2, 3, 5};
 
 int retarderCurrentPos = 0;
+int retarderInGamePos = 0;
 int retarderPotValueMargin = 7;
 
 bool shifterToggle1ReadValue;
@@ -38,8 +41,7 @@ void loop() {
   shifterToggle2ReadValue = digitalRead(shifterToggle2ButtonPin) == HIGH;
   handBrakeReadValue = digitalRead(handBrakeButtonPin) == HIGH;
 
-  //retarder kullanılmayacaksa aşağıdaki satır yorum yapılmalı
-  //handleRetarder();
+  handleRetarder();
   handleShifterToggle();
   handleHandBrake();
 
@@ -65,22 +67,35 @@ int getNewRetarderPos(int value) {
 
 void adjustRetarderPosition(int newPos) {
   bool turnDirection = newPos > retarderCurrentPos;
-  int diff = abs(newPos - retarderCurrentPos);
+  if (turnDirection) {
+    increaseRetarderPos(newPos);
+  } else {
+    decreaseRetarderPos(newPos);
+  }
+}
+
+void increaseRetarderPos(int newPos) {
+  int diff = mappedInGameRetarderPositions[newPos] - retarderInGamePos;
   for (int i = 0; i < diff; i++) {
-
-    if (turnDirection) {
-      ++retarderCurrentPos;
-      pushToButton(0);
-    } else {
-      --retarderCurrentPos;
-      pushToButton(1);
-    }
-
-    if (i >= 0 && i < (diff - 1)) {
-      // delay between push button if diff > 1
+    pushToButton(0);
+    ++retarderInGamePos;
+    if (i + 1 < diff) {
       delay(50);
     }
   }
+  ++retarderCurrentPos;
+}
+
+void decreaseRetarderPos(int newPos) {
+  int diff = retarderInGamePos - mappedInGameRetarderPositions[newPos];
+  for (int i = 0; i < diff; i++) {
+    pushToButton(1);
+    --retarderInGamePos;
+    if (i + 1 < diff) {
+      delay(50);
+    }
+  }
+  --retarderCurrentPos;
 }
 
 void handleShifterToggle() {
